@@ -1,8 +1,7 @@
 # Job Market Trends and Emerging Skills
 
 A distributed analytics pipeline that identifies **emerging skills** — not merely popular ones — from
-job-posting data. Built for **CSE412 Big Data & Large-Scale Computing** using
-**HDFS → Apache Pig → Apache Hive → Apache Spark (MLlib)**.
+job-posting data.
 
 ---
 
@@ -73,11 +72,9 @@ Full diagram and data flow: [`docs/architecture.md`](docs/architecture.md).
 | Item | Value |
 |---|---|
 | Dataset | `lukebarousse/data_jobs` |
-| Source | <https://huggingface.co/datasets/lukebarousse/data_jobs> |
-| Access | Direct HTTPS download, no account or token |
+| Source | <https://huggingface.co/datasets/lukebarousse/data_jobs> | |
 | Licence | **Apache-2.0** |
-| File | `data_jobs.csv`, **231,152,089 bytes**, UTF-8 CSV |
-| SHA-256 | `635241ed09ccee18bdae1f83b45f26d6759e0aa2513c529f6190e9054062436c` |
+| File | `data_jobs.csv`, **231,152,089 bytes**, UTF-8 CSV | |
 | Rows / columns | **785,741** / 17 |
 | Time coverage | 2023-01-01 → 2023-12-31, **12 monthly periods**, no gaps |
 | Skills | structured lists on **85.1%** of postings; **252 distinct skills** |
@@ -147,27 +144,7 @@ Or individually:
 .venv/bin/python -m pytest tests -q     # 15 tests: metrics, ESI, dashboard rendering
 ```
 
-### Environment quirks this repo already handles
 
-These cost real time to discover; each is handled in the scripts with the reason documented.
-
-| Quirk | Handling |
-|---|---|
-| Pig cannot parse quoted CSV with core loaders | `CSVExcelStorage` from `piggybank.jar` |
-| `CSVExcelStorage` needs `commons-collections` 3.x | added to `PIG_CLASSPATH` |
-| `ParquetStorer` not on Pig's default classpath | `parquet-pig-bundle-1.9.0.jar` added |
-| Pig/Hive default scratch dirs unwritable in restricted shells | explicit `hadoop.tmp.dir` / `mapred.local.dir` |
-| YARN ResourceManager cannot start here | `mapreduce.framework.name=local` over HDFS |
-| Hive 4 defaults to Tez (not installed) | `SET hive.execution.engine=mr` |
-| Hive ignores JVM `-D` for job config | settings passed as in-session `SET` |
-| Beeline dies without a TTY | `TERM=dumb` |
-| `beeline -f` echoes without executing | statements passed with `-e` |
-| Beeline client heap defaults to 256 MB | `HADOOP_HEAPSIZE_MAX=4096` |
-| Hive builds a literal `libjars/*` glob | `mkdir libjars` before running |
-| Hive matches Parquet **by column name** | Pig re-projects fields to strip `first::` prefixes |
-| Spark 4 enables ANSI mode by default | all divisions use `try_divide`, casts use `try_cast` |
-| Spark resolves relative paths against HDFS | `write_csv` forces an absolute `file://` URI |
-| MLlib needs numpy | venv interpreter used for driver and workers |
 
 ---
 
@@ -241,22 +218,9 @@ independent of the three.
 
 Detailed results, reconciliation and per-stage timings: [`docs/evaluation.md`](docs/evaluation.md).
 
----
-
-## 8. Example questions this answers
-
-- *Which skills are growing rather than merely common?* → ESI page; `fastapi`, `pytorch`, `hugging face`
-  rank high while `python`/`sql` do not, despite far larger totals.
-- *What is requested alongside Python?* → Skill Relationships tab: pair counts with Jaccard and PPMI.
-- *Is a skill spreading across roles?* → `occupational_adoption` table (7 occupations).
-- *Does a skill pay more?* → Salary tab: median advertised salary per occupation and per skill, with
-  sample counts; explicitly descriptive.
-- *Can I trust the numbers?* → Overview page reconciles every stage: 785,741 raw → 785,740 filtered →
-  775,275 deduplicated → 3,608,325 job-skill rows.
 
 ---
-
-## 9. Known limitations
+## 8. Known limitations
 
 1. **2023 only.** This is a historical analysis, not a live signal. The pipeline is the reusable asset.
 2. **Advertised roles only.** Online data/IT postings; blue-collar, informal and non-advertised work is absent.
@@ -274,7 +238,7 @@ Full discussion: [`docs/limitations.md`](docs/limitations.md).
 
 ---
 
-## 10. Repository layout
+## 9. Repository layout
 
 ```
 config/project.yaml        paths, thresholds, locked analysis decisions
