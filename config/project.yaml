@@ -1,0 +1,28 @@
+# Single source of truth for paths and locked analysis decisions.
+dataset:
+  name: lukebarousse/data_jobs
+  url: https://huggingface.co/datasets/lukebarousse/data_jobs/resolve/main/data_jobs.csv
+  sha256: 635241ed09ccee18bdae1f83b45f26d6759e0aa2513c529f6190e9054062436c
+  rows: 785741
+  license: Apache-2.0
+
+paths:
+  raw: data/raw/data_jobs.csv
+  hdfs_root: /jobmarket
+  tmp: tmp
+
+analysis:
+  period_field: job_posted_date
+  period_granularity: month          # 12 periods: 2023-01 .. 2023-12
+  dedup_key: [job_title, company_name, job_location, job_posted_date]
+  min_skill_postings: 50             # keeps 223 of 252 skills
+  min_pair_support: 50
+  # D7 (revised): 3 components. Salary excluded (2.8% coverage) and adoption excluded
+  # (saturates at 1.0 with only 7 occupations) — both are still reported separately.
+  esi_weights:
+    growth: 0.3333
+    trend: 0.3333
+    cooccurrence: 0.3333
+  salary_split:
+    train_end: "2023-09-30"
+    test_start: "2023-10-01"
